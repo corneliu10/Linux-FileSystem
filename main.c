@@ -31,17 +31,54 @@ TreeNode* createTreeNode(TreeNode *father) {
     return node;
 }
 
-int pathExists(TreeNode* node, char path[]) {
-    for (int i = 0; i < node->nrChilds; ++i)
-        if (strcmp(node->childs[i]->name, path) == 0) {
-            return 1;
-        }
+char** splitLine(const char *line, char delim[], int *nrWords) {
+    char **words = (char**) malloc(sizeof(char*));
+    char *ptr = strtok(line, delim);
 
-    return 0;
+	while(ptr != NULL)
+	{
+	    words = (char**) realloc(words, (*nrWords + 1) * sizeof(char*));
+	    words[*nrWords] = malloc(25 * sizeof(char));
+	    strcpy(words[(*nrWords)++], ptr);
+	    // printf("'%s'\n", ptr);
+		ptr = strtok(NULL, delim);
+	}
+
+	return words;
+}
+
+TreeNode* findPath(TreeNode* node, char path[]) {
+    if (strlen(path) == 0)
+        return node;
+
+    if (path[0] == '/') {
+        node = root;
+
+        if (strlen(path) == 0)
+            return root;
+    }
+
+    int nrWords = 0;
+    char delim[] = "/";
+    char** words = splitLine(path, delim, &nrWords);
+
+    for (int j = 0; j < nrWords; j++) {
+        int ok = 0;
+        for (int i = 0; i < node->nrChilds; ++i)
+            if (strcmp(node->childs[i]->name, words[j]) == 0) {
+                ok = 1;
+                node = node->childs[i];
+                break;
+            }
+
+        if (!ok) return NULL;
+    }
+
+    return node;
 }
 
 void addPath(TreeNode *root, char dir[PATH_LEN], FileType type) {
-    if (pathExists(root, dir)) {
+    if (findPath(root, dir) != NULL) {
         printf("%s: already exists\n", dir);
         return;
     }
@@ -55,12 +92,42 @@ void addPath(TreeNode *root, char dir[PATH_LEN], FileType type) {
     }
 }
 
+void copyPath(TreeNode *root, char path[], char destPath[]) {
+    TreeNode *src = findPath(root, path);
+    if (src == NULL) {
+        printf("%s: No such file or directory\n", path);
+        return;
+    }
+
+    TreeNode *dest = findPath(root, destPath);
+    if (dest == NULL) {
+        printf("%s: No such file or directory\n", destPath);
+        return;
+    }
+
+    addPath(dest, src->name, src->type);
+}
+
+void movePath(TreeNode *root, char path[], char destPath[]) {
+    copyPath(root, path, destPath);
+
+    TreeNode *src = findPath(root, path);
+    if (src == NULL) {
+        printf("%s: No such file or directory\n", path);
+        return;
+    }
+
+    removePath(src->father, src->name, File);
+}
+
 void removePath(TreeNode *root, char dir[PATH_LEN], FileType type) {
-    if (!pathExists(root, dir)) {
+    TreeNode *node = findPath(root, dir);
+    if (node == NULL) {
         printf("%s: No such file or directory\n", dir);
         return;
     }
 
+    root = node->father;
     for (int i = 0; i < root->nrChilds; ++i)
         if (strcmp(root->childs[i]->name, dir) == 0) {
             if (type == Folder) {
@@ -78,7 +145,7 @@ void removePath(TreeNode *root, char dir[PATH_LEN], FileType type) {
             for (int j = i; j < root->nrChilds - 1; ++j)
                 root->childs[j] = root->childs[j+1];
 
-            free(root->childs[root->nrChilds - 1]);
+            free(root->childs[root->nrChilds]);
             root->nrChilds--;
             return;
         }
@@ -86,7 +153,8 @@ void removePath(TreeNode *root, char dir[PATH_LEN], FileType type) {
 }
 
 void printTree(TreeNode *root) {
-    printf("%s %d\n", root->name, root->type);
+    pwd(root);
+    printf("\n");
     for (int i = 0; i < root->nrChilds; ++i) {
         printTree(root->childs[i]);
     }
@@ -102,23 +170,25 @@ TreeNode* generateTree(TreeNode *root) {
     addPath(root, "abc", Folder);
     addPath(root, "a.out", File);
     addPath(root, "man", File);
+    addPath(root, "manual", Folder);
+
+    TreeNode* node = findPath(root, "abc");
+    addPath(node, "a", Folder);
+    addPath(node, "b", Folder);
+    addPath(node, "c", Folder);
+
+    node = findPath(root, "manual");
+    addPath(node, "page1", File);
+    addPath(node, "page2", File);
+    addPath(node, "page3", File);
+
+    node = findPath(root, "ana");
+    addPath(node, "are", Folder);
+
+    node = findPath(node, "are");
+    addPath(node, "mere", Folder);
 
     return root;
-}
-
-char** splitLine(char *line, char delim[], int *nrWords) {
-    char **words = (char**) malloc(sizeof(char*));
-    char *ptr = strtok(line, delim);
-
-	while(ptr != NULL)
-	{
-	    words = (char**) realloc(words, (*nrWords + 1) * sizeof(char*));
-	    words[*nrWords] = malloc(25 * sizeof(char));
-	    strcpy(words[(*nrWords)++], ptr);
-		ptr = strtok(NULL, delim);
-	}
-
-	return words;
 }
 
 char* readLine() {
@@ -134,22 +204,6 @@ char* readLine() {
     return buffer;
 }
 
-TreeNode* findPath(TreeNode* currDir, char path[]) {
-    for (int i = 0; i < currDir->nrChilds; ++i) {
-        if (strcmp(currDir->childs[i]->name, path) == 0) {
-            if (currDir->childs[i]->type == File) {
-                printf("%s: Not a directory\n", path);
-                return NULL;
-            } else {
-                return currDir->childs[i];
-            }
-        }
-    }
-
-    printf("%s: No such file or directory\n", path);
-    return NULL;
-}
-
 TreeNode* cd(TreeNode* currDir, char** words, int nrWords) {
     if (nrWords < 2) {
         printf("cd: missing operand");
@@ -160,10 +214,20 @@ TreeNode* cd(TreeNode* currDir, char** words, int nrWords) {
             if (currDir->father != NULL) {
                 currDir = currDir->father;
             }
+        } else if (strcmp(words[1], "/") == 0) {
+            return root;
+        } else if (strcmp(words[1], "./") == 0) {
+            return currDir;
         } else {
             TreeNode* node = findPath(currDir, words[1]);
             if (node != NULL) {
-                currDir = node;
+                if (node->type == File) {
+                    printf("%s: Not a directory\n", words[1]);
+                } else {
+                    currDir = node;
+                }
+            } else {
+                printf("%s: No such file or directory\n", words[1]);
             }
         }
     }
@@ -193,6 +257,41 @@ int deleteFiles(TreeNode* currDir, char** words, int nrWords, FileType type) {
     }
 }
 
+int copyFiles(TreeNode* currDir, char** words, int nrWords) {
+    if (nrWords <= 2) {
+        return 0;
+    } else {
+        char* destPath = words[nrWords - 1];
+        for (int i = 1; i < nrWords - 1; ++i)
+            copyPath(currDir, words[i], destPath);
+
+        return 1;
+    }
+}
+
+int moveFiles(TreeNode* currDir, char** words, int nrWords) {
+    if (nrWords <= 2) {
+        return 0;
+    } else {
+        char* destPath = words[nrWords - 1];
+        for (int i = 1; i < nrWords - 1; ++i)
+            movePath(currDir, words[i], destPath);
+
+        return 1;
+    }
+}
+
+int removeFiles(TreeNode* currDir, char** words, int nrWords) {
+    if (nrWords <= 1) {
+        return 0;
+    } else {
+        for (int i = 1; i < nrWords; ++i)
+            removePath(currDir, words[i], File);
+
+        return 1;
+    }
+}
+
 TreeNode* executeCommand(TreeNode* currDir, char** words, int nrWords) {
     if (strcmp(words[0], "pwd") == 0) {
         pwd(currDir);
@@ -211,6 +310,17 @@ TreeNode* executeCommand(TreeNode* currDir, char** words, int nrWords) {
     }  else if (strcmp(words[0], "rmdir") == 0) {
         if (!deleteFiles(currDir, words, nrWords, Folder))
             printf("rmdir: missing operand");
+    }  else if (strcmp(words[0], "cp") == 0) {
+        if (!copyFiles(currDir, words, nrWords))
+            printf("cp: missing operand");
+    }  else if (strcmp(words[0], "mv") == 0) {
+        if (!moveFiles(currDir, words, nrWords))
+            printf("mv: missing operand");
+    }  else if (strcmp(words[0], "rm") == 0) {
+        if (!removeFiles(currDir, words, nrWords))
+            printf("rm: missing operand");
+    }  else if (strcmp(words[0], "print") == 0) {
+        printTree(root);
     } else if (nrWords > 0) {
         printf("%s: command not found", words[0]);
     }
@@ -251,8 +361,19 @@ void ls(TreeNode* currDir, char** words, int nrWords) {
         printf("ls: too many arguments");
     } else {
         int explicitFormat = 0;
-        if (nrWords >= 2 && strcmp(words[1], "-F") == 0) {
-            explicitFormat = 1;
+        if (nrWords >= 2) {
+            if (strcmp(words[1], "-F") == 0)
+                explicitFormat = 1;
+            else
+                currDir = findPath(currDir, words[1]);
+        }
+
+        if (nrWords == 3) {
+            currDir = findPath(currDir, words[2]);
+            if (currDir == NULL) {
+                printf("%s: No such file or directory", words[2]);
+                return;
+            }
         }
 
         for (int i = 0; i < currDir->nrChilds; ++i)
@@ -270,5 +391,4 @@ void ls(TreeNode* currDir, char** words, int nrWords) {
 int main()
 {
     run();
-    // printTree(root);
 }
