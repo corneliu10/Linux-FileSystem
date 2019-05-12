@@ -1,0 +1,21 @@
+20
+mkdir /lvl1 /lvl1/lvl2 /lvl1/lvl2/lvl3
+mkdir /x1 /x1/x2 /x1/x2/x3
+ls
+cd x1/x2
+pwd
+cd x3
+pwd
+cd /lvl1/lvl2
+ls
+pwd
+cd x2
+cd ..
+mkdir lvl22
+ls
+mkdir lvl22/lvl23/lvl24
+cd /lvl1/lvl2/lvl22
+pwd
+ls
+mkdir /lvl1/lvl2/lvl22
+ls

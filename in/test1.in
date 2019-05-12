@@ -1,0 +1,23 @@
+22
+ls
+pwd
+mkdir /abc
+mkdir /abc/a /abc/b
+ls
+cd /abc
+cd ..
+mkdir /ana /ana/are /ana/are/mere
+cd ana
+ls
+cd ..
+mkdir /manual/pag1 /manual/pag2
+mkdir manual
+cd manual
+mkdir pag1
+ls
+mkdir pag2
+ls
+mkdir pag3 pag4
+ls
+cd pag3
+pwd

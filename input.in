@@ -1,0 +1,17 @@
+16
+mkdir /abc
+cd /abc
+mkdir /a /b /c
+cd in
+ls
+cd ..
+pwd
+cd ..
+pwd
+cd abc/c
+pwd
+cd ../..
+mkdir manual
+pwd
+cd manual
+pwd

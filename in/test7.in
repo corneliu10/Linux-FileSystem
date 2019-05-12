@@ -1,0 +1,30 @@
+29
+mkdir dir dir/dir2 dir/dir2/extra1
+touch a.out1 a.out2 a.out3
+rm a.out
+ls
+mv a.out3 a.out1
+ls
+mkdir /abc
+cd /abc
+mkdir /a /b /c
+cd in
+pwd
+cd ..
+pwd
+pwd
+mkdir home
+cd home
+pwd
+mkdir /root1
+ls
+mkdir /root2 /root3 /root4 /root5
+mv root2 root6
+mkdir root2 root2/root21/root22
+cd root2
+pwd
+mkdir /root3/root31 /root3/root31/root32 /root2/root21 root22
+mkdir mkdir
+ls
+pwd
+cd /root3/root31

@@ -1,0 +1,10 @@
+a.out: No such file or directory
+a.out1: Not a directory
+dir/dir2/dir3: No such file or directory
+dir3: No such file or directory
+dir3: No such file or directory
+..: No such file or directory
+dir3: No such file or directory
+dir: Directory not empty
+dir/dir2/extra1: No such file or directory
+a.out4: No such file or directory

@@ -1,0 +1,21 @@
+20
+mkdir /root1
+ls
+mkdir /root2 /root3 /root4 /root5
+mv root2 root6
+mkdir root2 root2/root21/root22
+cd root2
+pwd
+mkdir /root3/root31 /root3/root31/root32 /root2/root21 root22
+mkdir mkdir
+ls
+pwd
+cd /root3/root31
+pwd
+ls
+mv /root2 root33
+ls
+cd rot33/root21
+ls
+pwd
+cd root22

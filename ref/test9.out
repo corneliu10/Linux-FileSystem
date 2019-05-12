@@ -1,0 +1,10 @@
+a/ ab* abc* abcd* abcde* abcdef* 
+a/ ab* abcd* abcde* abcdef* 
+a/ abcd* abcde* abcdef* 
+b/ 
+/a
+/a
+a abcd abcde abcdef 
+/a
+b/ f1* 
+a abcd abcde abcdef 

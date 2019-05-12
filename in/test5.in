@@ -1,0 +1,21 @@
+20
+mkdir /abc abc/a
+touchh a.out man
+ls
+mkdir manual manual/pag1 manual/pag2 manual/pag3
+touch manual/pag1/f1 manual/pag2/f2 manual/pag3/f3
+ls manual
+cd manual
+ls
+mv pag1 /
+mv pag2 /
+cd ..
+mkdir ana ana/are
+ls
+touch ana/are/mere ana/pleaca
+touch man
+touch anaana
+cd anaana
+pwd
+ls
+mv anaana ana1

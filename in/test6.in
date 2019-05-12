@@ -1,0 +1,21 @@
+20
+mkdir dir dir/dir2 dir/dir2/extra1
+touch a.out1 a.out2 a.out3
+rm a.out
+ls
+mv a.out3 a.out1
+ls
+mkdir dir/dir2/dir3
+mv dir/dir2/dir3 dir3
+mv a.out1 dir3
+cd dir3
+ls
+cd ..
+rmdir dir3 dir
+mv dir/dir2/extra1 extra
+cp a.out2 a.out4
+ls
+pwd
+mkdir home
+cd home
+pwd
