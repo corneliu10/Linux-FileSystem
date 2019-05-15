@@ -1,17 +1,23 @@
-16
-mkdir /abc
-cd /abc
-mkdir /a /b /c
-cd in
-ls
-cd ..
+22
+mkdir a a/b a/b/c a/b/c/d /a/b/c/d/e
+touch ab abc abcd abcde abcdef
+ls -F
+mv /a/b/c/d/e /
+rm abc
+ls -F
+rm ab
+ls -F
+rmdir a/b/c/d a/b
+cd a
+ls -F
 pwd
-cd ..
+cd a/b/c
 pwd
-cd abc/c
+touch f1 b/f2 b/f3
+ls -F b ..
+rm b/f3
+ls ..
+cd f1
 pwd
-cd ../..
-mkdir manual
-pwd
-cd manual
-pwd
+ls -F .
+ls /

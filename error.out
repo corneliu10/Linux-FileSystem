@@ -1,0 +1,6 @@
+/a/b/c/d/e: No such file or directory
+a/b/c/d: Directory not empty
+a/b: Directory not empty
+a/b/c: No such file or directory
+ls -F b ..: too many arguments
+f1: Not a directory
